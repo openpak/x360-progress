@@ -1,0 +1,15 @@
+# Merge into the primary Traefik dynamic.yml, alongside existing routers/services.
+tcp:
+  routers:
+    x360-progress-tls:
+      entryPoints: [console]
+      rule: HostSNI(`progress.xboxlive.com`)
+      priority: 100
+      service: x360-progress-tls
+      tls:
+        passthrough: true
+  services:
+    x360-progress-tls:
+      loadBalancer:
+        servers:
+        - address: openpak-x360-progress:10441
