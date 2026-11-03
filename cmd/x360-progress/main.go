@@ -13,6 +13,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/openpak/x360-common/httplog"
 	"github.com/openpak/x360-common/xstoken"
 	"github.com/openpak/x360-progress/internal/progress"
 )
@@ -37,7 +38,7 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	log.Info("x360-progress listening", "addr", ln.Addr())
-	srv := &http.Server{Handler: &progress.Handler{Signer: &xstoken.Signer{Key: key}, Log: log}, ReadHeaderTimeout: 10 * time.Second}
+	srv := &http.Server{Handler: httplog.Wrap(&progress.Handler{Signer: &xstoken.Signer{Key: key}, Log: log}), ReadHeaderTimeout: 10 * time.Second}
 	// XAM sends its bearer token only to HTTPS URLs. Keep the HTTP listener
 	// for diagnostics and serve console traffic through TLS passthrough.
 	var tlsSrv *http.Server
